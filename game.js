@@ -86,12 +86,34 @@ function update() {
 
     let minutes = date.getMinutes();
     if (minutes < 10) minutes = '0' + minutes;
-    timerMin.innerHTML = minutes;
+    timerMin.innerText = minutes;
 
     let seconds = date.getSeconds();
     if (seconds < 10) seconds = '0' + seconds;
-    timerSec.innerHTML = seconds;
+    timerSec.innerText = seconds;
+
+    console.log(minutes);
+    console.log(seconds);
+//     let minutes = 0;
+//     let seconds = 0;
+//
+//     if (minutes < 10) minutes ='0' + minutes;
+//     timerMin.innerHTML = minutes;
+//
+//     if (seconds < 10) seconds = '0' + seconds;
+//     timerSec.innerHTML = seconds;
+//
+//     seconds++;
+//     if (seconds > 60) {
+//         minutes++;
+//         seconds = 0;
+//     }
+//     if (minutes === 60 && seconds === 60) {
+//         clearInterval(timerId);
+//     }
+//
 }
+
 
 function draw() {
     // ctx.drawImage(bg, 0, 0);
@@ -106,7 +128,7 @@ function draw() {
 
     namePlayer.innerText = nameP;
 
-    timerId =setInterval(update,100);
+    timerId = setInterval(update,1000);
     update();
 
     for (let i = 0; i < fruits.length; i++) {
