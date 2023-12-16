@@ -18,6 +18,10 @@ fruit01.src = "img/fruit01.png";
 fruit02.src = "img/fruit02.png";
 fruit03.src = "img/fruit03.png";
 
+// Позиция тарелки >plate
+let xPos = cvs.width/2 - 32;
+let yPos = cvs.height - 40;
+
 // // Звуковые файлы
 // var fly = new Audio();
 // var score_audio = new Audio();
@@ -40,9 +44,13 @@ let dir;
 
 function direction(event) {
     if (event.keyCode === 39) {
-        dir = "right";
+        if (xPos <= cvs.width - plate.width) {
+            xPos += 10;
+        }
     } else if (event.keyCode === 37) {
-        dir = "left";
+        if (xPos >= 0) {
+            xPos -= 10;
+        }
     }
 }
 
@@ -71,49 +79,44 @@ fruits[2] = {
 // console.log(fruits);
 // console.log(fruits.length);
 
-// Позиция тарелки >plate
-let xPos = cvs.width/2 - 32;
-let yPos = cvs.height - 40;
 
 let life = 3;
 let score = 0;
 let nameP = "***";
 let timerId;
 
+let minutes = 0;
+let seconds = 0;
 function update() {
     // let clock = document.getElementById('clock');
-    let date = new Date();
+    // let date = new Date();
+    //
+    // let minutes = date.getMinutes();
+    // if (minutes < 10) minutes = '0' + minutes;
+    // timerMin.innerText = minutes;
+    //
+    // let seconds = date.getSeconds();
+    // if (seconds < 10) seconds = '0' + seconds;
+    // timerSec.innerText = seconds;
 
-    let minutes = date.getMinutes();
-    if (minutes < 10) minutes = '0' + minutes;
-    timerMin.innerText = minutes;
+    // console.log(minutes);
+    // console.log(seconds);
 
-    let seconds = date.getSeconds();
-    if (seconds < 10) seconds = '0' + seconds;
-    timerSec.innerText = seconds;
+    timerMin.innerHTML = minutes < 10 ? "0" + minutes : minutes;
 
-    console.log(minutes);
-    console.log(seconds);
-//     let minutes = 0;
-//     let seconds = 0;
-//
-//     if (minutes < 10) minutes ='0' + minutes;
-//     timerMin.innerHTML = minutes;
-//
-//     if (seconds < 10) seconds = '0' + seconds;
-//     timerSec.innerHTML = seconds;
-//
-//     seconds++;
-//     if (seconds > 60) {
-//         minutes++;
-//         seconds = 0;
-//     }
-//     if (minutes === 60 && seconds === 60) {
-//         clearInterval(timerId);
-//     }
+    seconds ++;
+    // if (seconds < 10) seconds = '0' + seconds;
+    timerSec.innerHTML = seconds < 10 ? "0" + seconds : seconds;
+
+    if (seconds > 60) {
+        minutes++;
+        seconds = 0;
+    }
+    if (minutes === 60 && seconds === 60) {
+        clearInterval(timerId);
+    }
 //
 }
-
 
 function draw() {
     // ctx.drawImage(bg, 0, 0);
@@ -122,36 +125,51 @@ function draw() {
 
     ctx.drawImage(plate, xPos, yPos);
 
-    if (dir === "left") xPos -= 3;
-    if (dir === "right") xPos += 3;
+    // if (dir === "left") xPos -= 3;
+    // if (dir === "right") xPos += 3;
 
 
     namePlayer.innerText = nameP;
 
-    timerId = setInterval(update,1000);
-    update();
+
+    // update();
 
     for (let i = 0; i < fruits.length; i++) {
+        // let fruitRan = Math.floor(Math.random() * 3)
+        // ctx.drawImage(fruit01, fruits[i].x, fruits[i].y)
+        // ctx.drawImage(fruit02, fruits[i].x, fruits[i].y)
+        // ctx.drawImage(fruit03, fruits[i].x, fruits[i].y)
         ctx.drawImage(fruit03, fruits[0].x, fruits[0].y);
         ctx.drawImage(fruit02, fruits[1].x, fruits[1].y);
         ctx.drawImage(fruit01, fruits[2].x, fruits[2].y);
 
-        fruits[i].y++;
+        fruits[i].y ++;
         // fruits[1].y++;
         // fruits[2].y++;
 
         // if(fruits[i].y === cvs.height || fruits[i].y === cvs.height || fruits[i].y === cvs.height)
-        if(fruits[i].y === cvs.height) {
-            fruits.push({
-                x: Math.floor(Math.random() * fruit03.height) - fruit03.height,
-                y: cvs.height
-            });
+        if(fruits[i].y >= cvs.height) {
+            fruits[i] = {
+                x :  Math.floor(Math.random() * (cvs.width-40)),
+                y :  Math.floor(Math.random() * -25)
+            };
+            life--;
         }
 
-        if(xPos + plate.width/2 === fruits[0].x + fruit03/2 && yPos === fruits[i].y || xPos + plate.width/2 === fruits[1].x && yPos === fruits[i].y || xPos + plate.width/2 === fruits[2].x && yPos === fruits[i].y) {
+        if ((fruits[i].x + 16) >= xPos
+            && (fruits[i].x + 16) <= xPos + plate.width
+            && (fruits[i].y + 32) >= yPos){
+            fruits[i] = {
+                x :  Math.floor(Math.random() * (cvs.width-40)),
+                y :  Math.floor(Math.random() * -25)
+            };
             score +=5;
-            // location.reload(); // Перезагрузка страницы
         }
+
+        // if(xPos + plate.width/2 === fruits[0].x + fruit03/2 && yPos === fruits[i].y || xPos + plate.width/2 === fruits[1].x && yPos === fruits[i].y || xPos + plate.width/2 === fruits[2].x && yPos === fruits[i].y) {
+        //     score +=5;
+        //     // location.reload(); // Перезагрузка страницы
+        // }
 
         // ctx.drawImage(fruit03, fruits[i].x, fruits[i].y);
         // ctx.drawImage(fruit02, fruits[i].x, fruits[i].y);
@@ -170,11 +188,11 @@ function draw() {
         //         y: cvs.height
         //     });
 
-        if (fruits[i].y === cvs.height || fruits[i].y === cvs.height || fruits[i].y === cvs.height) {
-            life-=1;
-            // clearInterval(game);
-            //
-        }
+        // if (fruits[i].y === cvs.height || fruits[i].y === cvs.height || fruits[i].y === cvs.height) {
+        //     life-=1;
+        //     // clearInterval(game);
+        //     //
+        // }
     }
 
 
@@ -215,10 +233,9 @@ function draw() {
     }
 
 
-    if (score === 50 && life === 0) {
-        clearInterval(timerId); {
-            timerId =null;
-        }
+    if (score === 50 || life === 0) {
+        clearInterval(game);
+        clearInterval(timerId);
     }
 
     // ctx.drawImage(plate, xPos, yPos);
@@ -230,12 +247,13 @@ function draw() {
     countLife.innerText = life;
 
 
-    requestAnimationFrame(draw);
+    // requestAnimationFrame(draw);
 
 }
 nameP = prompt("Введите ваше имя:");
-
-fruit03.onload = draw;
-fruit02.onload = draw;
-fruit01.onload = draw;
-// let game = setInterval(draw, 200);
+//
+// fruit03.onload = draw;
+// fruit02.onload = draw;
+// fruit01.onload = draw;
+let game = setInterval(draw, 10);
+timerId = setInterval(update,1000);
